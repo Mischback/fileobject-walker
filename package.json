@@ -1,7 +1,7 @@
 {
   "name": "@mischback/fileobject-walker",
   "description": "Walk fileobjects recursively and apply a provided payload to them",
-  "version": "0.0.1-alpha-1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
