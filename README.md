@@ -68,3 +68,15 @@ fileObjectWalker("./", examplePayload, "foo.txt", 1337)
     console.log(err);
   });
 ```
+
+## Contributing
+
+Issues, pull requests and feature requests are welcome. Just use the project's
+[issue tracker](https://github.com/mischback/fileobject-walker/issues).
+
+_fileobject-walker_ is implemented in TypeScript and compiled/transpiled to
+actual JavaScript on release.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit)
