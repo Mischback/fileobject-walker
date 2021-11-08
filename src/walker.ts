@@ -2,7 +2,7 @@
 
 /* library imports */
 import { readdir, stat } from "fs/promises";
-import { resolve as pathresolve } from "path";
+import { join, resolve as pathresolve } from "path";
 
 /**
  * Custom Error class for the FileObjectWalker
@@ -62,7 +62,7 @@ export function fileObjectWalker<T>(
               fileList.forEach((file) => {
                 /* make the file path absolute */
                 fileObjectWalker(
-                  pathresolve(fileObject, file),
+                  join(fileObject, file),
                   payload,
                   ...payloadArgs
                 )

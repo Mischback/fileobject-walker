@@ -164,4 +164,56 @@ describe("fileObjectWalker()...", () => {
       );
     });
   });
+
+  it("...recursively calls fileObjectWalker() on the result of readdir()", () => {
+    /* define the parameter */
+    const testPayloadReturn = "success";
+    const testStartingPoint = "testEntryPoint";
+    const testFile1 = "testFile1";
+    const testFile2 = "testFile2";
+    const testStatObjectDir = new Stats();
+    testStatObjectDir.isDirectory = () => {
+      return true;
+    };
+    const testStatObjectFile = new Stats();
+    testStatObjectFile.isDirectory = () => {
+      return false;
+    };
+    const testReaddirResult: string[] = ["foo", "bar"];
+    const testPayload = (
+      startingPoint: string,
+      _payloadConfig: unknown
+    ): Promise<{ [key: string]: string }> => {
+      return Promise.resolve({
+        [startingPoint]: testPayloadReturn,
+      });
+    };
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock)
+      .mockReturnValueOnce(testStartingPoint)
+      .mockReturnValueOnce(testFile1)
+      .mockReturnValueOnce(testFile2)
+      .mockReturnValue("foo");
+    (stat as jest.Mock)
+      .mockResolvedValueOnce(testStatObjectDir)
+      .mockResolvedValue(testStatObjectFile);
+    (readdir as jest.Mock).mockResolvedValue(testReaddirResult);
+
+    /* make the assertions */
+    return fileObjectWalker(testStartingPoint, testPayload).then(
+      (retVal: { [key: string]: string }) => {
+        expect(
+          Object.prototype.hasOwnProperty.call(retVal, testFile1)
+        ).toBeTruthy();
+        expect(
+          Object.prototype.hasOwnProperty.call(retVal, testFile2)
+        ).toBeTruthy();
+        expect(Object.keys(retVal).length).toBe(2);
+        expect(resolve).toHaveBeenCalledTimes(3);
+        expect(stat).toHaveBeenCalledTimes(3);
+        expect(readdir).toHaveBeenCalledTimes(1);
+      }
+    );
+  });
 });
