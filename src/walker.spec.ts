@@ -126,4 +126,42 @@ describe("fileObjectWalker()...", () => {
       }
     );
   });
+
+  it("...calls the payload with any number of provided arguments", () => {
+    /* define the parameter */
+    const testPayloadParam1 = "param1";
+    const testPayloadParam2 = 1337;
+    const testRejection = "testRejection";
+    const testStartingPoint = "testEntryPoint";
+    const testStatObject = new Stats();
+    testStatObject.isDirectory = () => {
+      return false;
+    };
+    const testPayload = jest.fn(
+      (_startingPoint: string, ..._payloadConfig: unknown[]) => {
+        return Promise.reject(new Error(testRejection));
+      }
+    );
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock).mockReturnValue(testStartingPoint);
+    (stat as jest.Mock).mockResolvedValue(testStatObject);
+
+    /* make the assertions */
+    return fileObjectWalker(
+      testStartingPoint,
+      testPayload,
+      testPayloadParam1,
+      testPayloadParam2
+    ).catch((err: Error) => {
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toBe(testRejection);
+      expect(testPayload).toBeCalledTimes(1);
+      expect(testPayload).toHaveBeenCalledWith(
+        testStartingPoint,
+        testPayloadParam1,
+        testPayloadParam2
+      );
+    });
+  });
 });
