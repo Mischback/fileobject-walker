@@ -31,3 +31,25 @@ The `fileObjectWalker()` accepts two mandatory and unlimited optional parameters
   parameters for its internal control flow (see below).
 - any parameter provided after `payload` are considered parameters for the
   provided `payload` function and are passed on when executing the `payload`.
+
+```TypeScript
+import { fileObjectWalker } from "@mischback/fileobject-walker";
+
+function examplePayload(
+  filename: string,
+  payloadArg1: unknown,
+  payloadArg2: unknown
+): Promise<{[key: string]: string}> {
+  const arg1 = payloadArg1 as string;
+  const arg2 = payloadArg2 as number;
+
+  return new Promise((resolve, reject) => {
+    if (filename === arg1)
+      return resolve({[filename]: "success"});
+
+    return reject(arg2);
+  });
+}
+
+fileObjectWalker("./", examplePayload, "foo.txt", 1);
+```
