@@ -70,4 +70,60 @@ describe("fileObjectWalker()...", () => {
       }
     );
   });
+
+  it("...resolves with the payload result if called on a file", () => {
+    /* define the parameter */
+    const testPayloadReturn = "success";
+    const testStartingPoint = "testEntryPoint";
+    const testStatObject = new Stats();
+    testStatObject.isDirectory = () => {
+      return false;
+    };
+    const testPayload = (
+      _startingPoint: string,
+      _payloadConfig: unknown
+    ): Promise<string> => {
+      return Promise.resolve(testPayloadReturn);
+    };
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock).mockReturnValue(testStartingPoint);
+    (stat as jest.Mock).mockResolvedValue(testStatObject);
+
+    /* make the assertions */
+    return fileObjectWalker(testStartingPoint, testPayload).then(
+      (retVal: string) => {
+        expect(retVal).toBe(testPayloadReturn);
+        expect(readdir).toHaveBeenCalledTimes(0);
+      }
+    );
+  });
+
+  it("...rejects with the rejection of the payload if called on a file", () => {
+    /* define the parameter */
+    const testRejection = "testRejection";
+    const testStartingPoint = "testEntryPoint";
+    const testStatObject = new Stats();
+    testStatObject.isDirectory = () => {
+      return false;
+    };
+    const testPayload = (
+      _startingPoint: string,
+      _payloadConfig: unknown
+    ): Promise<string> => {
+      return Promise.reject(new Error(testRejection));
+    };
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock).mockReturnValue(testStartingPoint);
+    (stat as jest.Mock).mockResolvedValue(testStatObject);
+
+    /* make the assertions */
+    return fileObjectWalker(testStartingPoint, testPayload).catch(
+      (err: Error) => {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toBe(testRejection);
+      }
+    );
+  });
 });
