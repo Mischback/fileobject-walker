@@ -270,4 +270,37 @@ describe("fileObjectWalker()...", () => {
       }
     );
   });
+
+  it("...immediatly resolves, if readdir() returns empty list", () => {
+    /* define the parameter */
+    const testStartingPoint = "testEntryPoint";
+    const testStatObjectDir = new Stats();
+    testStatObjectDir.isDirectory = () => {
+      return true;
+    };
+    const testStatObjectFile = new Stats();
+    testStatObjectFile.isDirectory = () => {
+      return false;
+    };
+    const testReaddirResult: string[] = [];
+    const testPayload = jest.fn(
+      (_filename: string, ..._payloadArgs: unknown[]) => {
+        return Promise.resolve("foo");
+      }
+    );
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock).mockReturnValue(testStartingPoint);
+    (stat as jest.Mock).mockResolvedValue(testStatObjectDir);
+    (readdir as jest.Mock).mockResolvedValue(testReaddirResult);
+
+    /* make the assertions */
+    return fileObjectWalker(testStartingPoint, testPayload).then((retVal) => {
+      expect(retVal).toStrictEqual({});
+      expect(resolve).toHaveBeenCalledTimes(1);
+      expect(stat).toHaveBeenCalledTimes(1);
+      expect(readdir).toHaveBeenCalledTimes(1);
+      expect(testPayload).toHaveBeenCalledTimes(0);
+    });
+  });
 });
