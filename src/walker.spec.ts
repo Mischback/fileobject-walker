@@ -216,4 +216,58 @@ describe("fileObjectWalker()...", () => {
       }
     );
   });
+
+  it("...rejects if a payload rejects during recursive call", () => {
+    /* define the parameter */
+    const testPayloadReturn = "success";
+    const testRejection = "testRejection";
+    const testStartingPoint = "testEntryPoint";
+    const testFile1 = "testFile1";
+    const testFile2 = "testFile2";
+    const testStatObjectDir = new Stats();
+    testStatObjectDir.isDirectory = () => {
+      return true;
+    };
+    const testStatObjectFile = new Stats();
+    testStatObjectFile.isDirectory = () => {
+      return false;
+    };
+    const testReaddirResult: string[] = ["foo", "bar"];
+    const testPayload = jest.fn(
+      (
+        _startingPoint: string,
+        ..._payloadConfig: unknown[]
+      ): Promise<{ [key: string]: string }> => {
+        return Promise.reject(new Error(testRejection));
+      }
+    );
+    testPayload.mockImplementationOnce(
+      (startingPoint: string, ..._payloadConfig: unknown[]) => {
+        return Promise.resolve({
+          [startingPoint]: testPayloadReturn,
+        });
+      }
+    );
+
+    /* setup mocks and spies */
+    (resolve as jest.Mock)
+      .mockReturnValueOnce(testStartingPoint)
+      .mockReturnValueOnce(testFile1)
+      .mockReturnValueOnce(testFile2)
+      .mockReturnValue("foo");
+    (stat as jest.Mock)
+      .mockResolvedValueOnce(testStatObjectDir)
+      .mockResolvedValue(testStatObjectFile);
+    (readdir as jest.Mock).mockResolvedValue(testReaddirResult);
+
+    /* make the assertions */
+    return fileObjectWalker(testStartingPoint, testPayload).catch(
+      (err: Error) => {
+        expect(err).toBeInstanceOf(Error);
+        expect(resolve).toHaveBeenCalledTimes(3);
+        expect(stat).toHaveBeenCalledTimes(3);
+        expect(readdir).toHaveBeenCalledTimes(1);
+      }
+    );
+  });
 });
