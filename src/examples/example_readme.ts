@@ -10,16 +10,20 @@ function examplePayload(
   const arg2 = payloadArg2 as number;
 
   return new Promise((resolve, reject) => {
-    if (basename(filename) === arg1) return resolve({ [filename]: "success" });
+    if (basename(filename) !== arg1) return resolve({ [filename]: "skipped" });
 
     return reject(arg2);
   });
 }
 
-fileObjectWalker("./foo.txt", examplePayload, "foo.txt", 1)
+fileObjectWalker("./", examplePayload, "foo.txt", 1337)
   .then((retVal) => {
-    console.log(retVal); // { '/home/mischback/fileobject-walker/foo.txt': 'success' }
+    // produces a long list of files if there is no "foo.txt" in your current
+    // working directory or any of its subfolders
+    console.log(retVal);
   })
   .catch((err) => {
-    console.log(err); // 1
+    // 1337 if there is a "foo.txt" in your current working directory or any of
+    //  its subfolders
+    console.log(err);
   });
