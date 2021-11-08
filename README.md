@@ -28,28 +28,15 @@ The `fileObjectWalker()` accepts two mandatory and unlimited optional parameters
   root.
 - `payload`: The function to execute on files. The function must accept a
   filename, specified as string, as its first parameter. It may accept more
-  parameters for its internal control flow (see below).
+  parameters for its internal control flow (see below). The function is expected
+  to work _Promise-based_.
 - any parameter provided after `payload` are considered parameters for the
   provided `payload` function and are passed on when executing the `payload`.
 
+See the following application in _TypeScript_. Please note, that the parameters
+passed to `payload` are of type `unknown` and must be cast to their original
+type inside of the `payload` function.
+
 ```TypeScript
-import { fileObjectWalker } from "@mischback/fileobject-walker";
 
-function examplePayload(
-  filename: string,
-  payloadArg1: unknown,
-  payloadArg2: unknown
-): Promise<{[key: string]: string}> {
-  const arg1 = payloadArg1 as string;
-  const arg2 = payloadArg2 as number;
-
-  return new Promise((resolve, reject) => {
-    if (filename === arg1)
-      return resolve({[filename]: "success"});
-
-    return reject(arg2);
-  });
-}
-
-fileObjectWalker("./", examplePayload, "foo.txt", 1);
 ```
