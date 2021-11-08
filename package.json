@@ -1,4 +1,15 @@
 {
+  "name": "@mischback/fileobject-walker",
+  "description": "Walk fileobjects recursively and apply a provided payload to them",
+  "version": "0.0.1-alpha-1",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mischback/fileobject-walker.git"
+  },
+  "author": "Mischback",
+  "license": "MIT",
+  "homepage": "https://github.com/Mischback/fileobject-walker/#readme",
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
