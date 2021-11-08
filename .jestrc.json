@@ -6,7 +6,11 @@
 
   "clearMocks": true,
 
-  "collectCoverageFrom": ["<rootDir>/**/*.ts"],
+  "collectCoverageFrom": [
+    "<rootDir>/**/*.ts",
+    "!<rootDir>/index.ts",
+    "!<rootDir>/examples/**/*.ts"
+  ],
 
   "coverageReporters": ["text"],
 

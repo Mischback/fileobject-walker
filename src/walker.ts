@@ -24,15 +24,22 @@ export class FileObjectWalkerError extends Error {
 /**
  * The actual file system walker to process the files
  *
- * @param fileObject - A file or directory (provided as string) as starting
- *                     point of the walker
- * @param payload - A function to be executed on actual files; the function is
- *                  called with the current filename and a configuration object
- *                  for the payload {@link payloadConfig}
- * @param payloadConfig - An instance of the payload's configuration object, as
- *                        specified in {@link payload}
+ * @param startingPoint - A file or directory (provided as string) as starting
+ *                        point of the walker. If specified as a relative path,
+ *                        the function will resolve it (make it absolute) with
+ *                        the current working directory of your Node process as
+ *                        root.
+ * @param payload - The function to execute on files. The function must accept a
+ *                  filename, specified as string, as its first parameter. It
+ *                  may accept more parameters for its internal control flow.
+ * @param ...payloadArgs - Any parameter provided after {@link payload} is
+ *                         considered a parameter for {@link payload} and passed
+ *                         on when calling {@link payload}.
  * @returns - A Promise, resolving to an object as determined by {@link payload}'s
  *            return type.
+ *          - An instance of {@link FileObjectWalkerError} if there was an error
+ *            during this function's operation or any error that is thrown
+ *            in the {@link payload} function.
  */
 export function fileObjectWalker<T>(
   startingPoint: string,
