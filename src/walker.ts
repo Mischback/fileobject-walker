@@ -35,10 +35,11 @@ export class FileObjectWalkerError extends Error {
  *            return type.
  */
 export function fileObjectWalker<T>(
-  fileObject: string,
+  startingPoint: string,
   payload: (filename: string, ...payloadArgs: unknown[]) => Promise<T>,
   ...payloadArgs: unknown[]
 ): Promise<T> {
+  const fileObject = pathresolve(startingPoint);
   return new Promise((resolve, reject) => {
     stat(fileObject)
       .then((statObject) => {
