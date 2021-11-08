@@ -117,7 +117,8 @@ lint/prettier : | $(STAMP_NODE_INSTALL)
 # the  STMAP_TS_COMPILED recipe).
 util/clean-publish : $(STAMP_TS_COMPILED)
 	npx clean-publish --without-publish --temp-dir $(CLEAN_PUBLISH_DIR) && \
-	rm -f $(CLEAN_PUBLISH_DIR)/dist/.gitignore
+	rm -f $(CLEAN_PUBLISH_DIR)/dist/.gitignore && \
+	rm -rf $(CLEAN_PUBLISH_DIR)/dist/examples
 .PHONY : util/clean-publish
 
 # Apply/update the git hooks
