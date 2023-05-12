@@ -10,6 +10,14 @@
 
 Walk fileobjects recursively and apply a provided payload to them.
 
+## Out of Maintanence
+
+_fileobject-walker_ is **out of maintenance** until further notice.
+
+There will be no additional features, and **no bugfixes**. If you're interested
+in taking over this project, you may use GitHub to get in touch (e.g. by
+posting an issue in this repository).
+
 ## Installation
 
 Just install from **npm**:
